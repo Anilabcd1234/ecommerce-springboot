@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My E-Commerce Store</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+        h1 { color: #333; }
+        .card { background: white; padding: 20px; margin: 15px 0; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        button { background: #4CAF50; color: white; padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #45a049; }
+        input, select { padding: 10px; margin: 8px 0; width: 200px; border: 1px solid #ccc; border-radius: 4px; }
+        label { font-weight: bold; }
+        .result { margin-top: 10px; font-weight: bold; color: green; }
+    </style>
+</head>
+<body>
+<h1>🛒 My E-Commerce Store</h1>
+
+<div class="card">
+    <h2>1. Add to Cart</h2>
+    <label>Customer ID:</label><br>
+    <input type="number" id="customerId" value="1"> <br>
+    <label>Product IDs:</label><br>
+    <input type="text" id="productIds" value="1,2"> <br>
+    <label>Total Amount:</label><br>
+    <input type="number" id="totalAmount" value="250000"> <br>
+    <button onclick="addToCart()">Add to Cart</button>
+    <p id="cartResult" class="result"></p>
+</div>
+
+<div class="card">
+    <h2>2. Make Payment</h2>
+    <label>Order ID:</label><br>
+    <input type="number" id="orderId" value="1"> <br>
+    <label>Amount:</label><br>
+    <input type="number" id="amount" value="150000"> <br>
+    <label>Payment Method:</label><br>
+    <select id="paymentMethod">
+        <option>UPI</option>
+        <option>CARD</option>
+        <option>COD</option>
+    </select> <br>
+    <button onclick="makePayment()">Pay Now</button>
+    <p id="paymentResult" class="result"></p>
+</div>
+
+<script>
+    const BASE_URL = "http://localhost:8080/api";
+    function addToCart() {
+        const data = {
+            customerId: parseInt(document.getElementById('customerId').value),
+            productIds: document.getElementById('productIds').value.split(',').map(Number),
+            totalAmount: parseFloat(document.getElementById('totalAmount').value)
+        };
+        fetch(BASE_URL + "/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        }).then(res => res.json()).then(data => {
+            document.getElementById('cartResult').innerText = "✅ Cart Created! ID: " + data.id;
+        });
+    }
+    function makePayment() {
+        const data = {
+            orderId: parseInt(document.getElementById('orderId').value),
+            amount: parseFloat(document.getElementById('amount').value),
+            paymentMethod: document.getElementById('paymentMethod').value,
+            status: "SUCCESS"
+        };
+        fetch(BASE_URL + "/payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        }).then(res => res.json()).then(data => {
+            document.getElementById('paymentResult').innerText = "✅ Payment SUCCESS! ID: " + data.id;
+        });
+    }
+</script>
+</body>
+</html>
